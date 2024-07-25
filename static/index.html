@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD App</title>
+    <style>
+        .form-container {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Book & Animal CRUD App</h1>
+
+    <div class="form-container">
+        <h2>Add Book</h2>
+        <input type="text" id="add-book-id" placeholder="ID">
+        <input type="text" id="add-book-title" placeholder="Title">
+        <input type="text" id="add-book-author" placeholder="Author">
+        <button onclick="addBook()">Add Book</button>
+    </div>
+
+    <div class="form-container">
+        <h2>Update Book</h2>
+        <input type="text" id="update-book-id" placeholder="ID">
+        <input type="text" id="update-book-title" placeholder="Title">
+        <input type="text" id="update-book-author" placeholder="Author">
+        <button onclick="updateBook()">Update Book</button>
+    </div>
+
+    <div class="form-container">
+        <h2>Delete Book</h2>
+        <input type="text" id="delete-book-id" placeholder="ID">
+        <button onclick="deleteBook()">Delete Book</button>
+    </div>
+
+    <h2>Books List</h2>
+    <button onclick="getBooks()">Refresh List</button>
+    <ul id="books-list"></ul>
+
+    <div class="form-container">
+        <h2>Add Animal</h2>
+        <input type="text" id="add-animal-id" placeholder="ID">
+        <input type="text" id="add-animal-name" placeholder="Name">
+        <input type="text" id="add-animal-type" placeholder="Type">
+        <button onclick="addAnimal()">Add Animal</button>
+    </div>
+
+    <div class="form-container">
+        <h2>Update Animal</h2>
+        <input type="text" id="update-animal-id" placeholder="ID">
+        <input type="text" id="update-animal-name" placeholder="Name">
+        <input type="text" id="update-animal-type" placeholder="Type">
+        <button onclick="updateAnimal()">Update Animal</button>
+    </div>
+
+    <div class="form-container">
+        <h2>Delete Animal</h2>
+        <input type="text" id="delete-animal-id" placeholder="ID">
+        <button onclick="deleteAnimal()">Delete Animal</button>
+    </div>
+
+    <h2>Animals List</h2>
+    <button onclick="getAnimals()">Refresh List</button>
+    <ul id="animals-list"></ul>
+
+    <script>
+        const bookApiUrl = 'http://localhost:8080/api/books';
+        const animalApiUrl = 'http://localhost:8080/api/animals';
+
+        // Book API functions
+        async function getBooks() {
+            const response = await fetch(bookApiUrl);
+            const books = await response.json();
+            const booksList = document.getElementById('books-list');
+            booksList.innerHTML = '';
+            books.forEach(book => {
+                const li = document.createElement('li');
+                li.textContent = `${book.id}: ${book.title} by ${book.author}`;
+                booksList.appendChild(li);
+            });
+        }
+
+        async function addBook() {
+            const id = document.getElementById('add-book-id').value;
+            const title = document.getElementById('add-book-title').value;
+            const author = document.getElementById('add-book-author').value;
+            const newBook = { id, title, author };
+
+            await fetch(bookApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newBook),
+            });
+
+            getBooks();
+        }
+
+        async function updateBook() {
+            const id = document.getElementById('update-book-id').value;
+            const title = document.getElementById('update-book-title').value;
+            const author = document.getElementById('update-book-author').value;
+            const updatedBook = { id, title, author };
+
+            await fetch(`${bookApiUrl}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedBook),
+            });
+
+            getBooks();
+        }
+
+        async function deleteBook() {
+            const id = document.getElementById('delete-book-id').value;
+
+            await fetch(`${bookApiUrl}/${id}`, {
+                method: 'DELETE',
+            });
+
+            getBooks();
+        }
+
+        // Animal API functions
+        async function getAnimals() {
+            const response = await fetch(animalApiUrl);
+            const animals = await response.json();
+            const animalsList = document.getElementById('animals-list');
+            animalsList.innerHTML = '';
+            animals.forEach(animal => {
+                const li = document.createElement('li');
+                li.textContent = `${animal.id}: ${animal.name} (${animal.type})`;
+                animalsList.appendChild(li);
+            });
+        }
+
+        async function addAnimal() {
+            const id = document.getElementById('add-animal-id').value;
+            const name = document.getElementById('add-animal-name').value;
+            const type = document.getElementById('add-animal-type').value;
+            const newAnimal = { id, name, type };
+
+            await fetch(animalApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newAnimal),
+            });
+
+            getAnimals();
+        }
+
+        async function updateAnimal() {
+            const id = document.getElementById('update-animal-id').value;
+            const name = document.getElementById('update-animal-name').value;
+            const type = document.getElementById('update-animal-type').value;
+            const updatedAnimal = { id, name, type };
+
+            await fetch(`${animalApiUrl}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedAnimal),
+            });
+
+            getAnimals();
+        }
+
+        async function deleteAnimal() {
+            const id = document.getElementById('delete-animal-id').value;
+
+            await fetch(`${animalApiUrl}/${id}`, {
+                method: 'DELETE',
+            });
+
+            getAnimals();
+        }
+
+        // Load books and animals when the page loads
+        window.onload = () => {
+            getBooks();
+            getAnimals();
+        };
+    </script>
+</body>
+</html>
