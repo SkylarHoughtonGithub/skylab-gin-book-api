@@ -1,155 +1,273 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
+	"os"
+	"strconv"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 )
 
-// Animal represents data about an animal.
-type Animal struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Type string `json:"type"`
-}
+var (
+	booksFile   = "books.json"
+	animalsFile = "animals.json"
+	mu          sync.Mutex
+)
 
-var animals = []Animal{
-	{ID: "1", Name: "Lion", Type: "Mammal"},
-	{ID: "2", Name: "Eagle", Type: "Bird"},
-}
-
-// Handlers
-
-func getAnimals(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, animals)
-}
-
-func getAnimal(c *gin.Context) {
-	id := c.Param("id")
-	for _, animal := range animals {
-		if animal.ID == id {
-			c.IndentedJSON(http.StatusOK, animal)
-			return
-		}
-	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "animal not found"})
-}
-
-func addAnimal(c *gin.Context) {
-	var newAnimal Animal
-
-	// Call BindJSON to bind the received JSON to newAnimal.
-	if err := c.BindJSON(&newAnimal); err != nil {
-		return
-	}
-
-	// Add the new animal to the slice.
-	animals = append(animals, newAnimal)
-	c.IndentedJSON(http.StatusCreated, newAnimal)
-}
-
-func updateAnimal(c *gin.Context) {
-	id := c.Param("id")
-	var updatedAnimal Animal
-
-	// Call BindJSON to bind the received JSON to updatedAnimal.
-	if err := c.BindJSON(&updatedAnimal); err != nil {
-		return
-	}
-
-	for i, animal := range animals {
-		if animal.ID == id {
-			animals[i] = updatedAnimal
-			c.IndentedJSON(http.StatusOK, updatedAnimal)
-			return
-		}
-	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "animal not found"})
-}
-
-func deleteAnimal(c *gin.Context) {
-	id := c.Param("id")
-	for i, animal := range animals {
-		if animal.ID == id {
-			animals = append(animals[:i], animals[i+1:]...)
-			c.IndentedJSON(http.StatusOK, gin.H{"message": "animal deleted"})
-			return
-		}
-	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "animal not found"})
-}
-
-// Book represents data about a book.
 type Book struct {
-	ID     string `json:"id"`
 	Title  string `json:"title"`
 	Author string `json:"author"`
 }
 
-var books = []Book{
-	{ID: "1", Title: "1984", Author: "George Orwell"},
-	{ID: "2", Title: "To Kill a Mockingbird", Author: "Harper Lee"},
+type Animal struct {
+	Name string `json:"name"`
+	Type string `json:"type"`
 }
 
-// Handlers
+func readJSONFile(filename string, v interface{}) error {
+	mu.Lock()
+	defer mu.Unlock()
+	file, err := os.Open(filename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			// File doesn't exist, return empty data
+			return nil
+		}
+		return err
+	}
+	defer file.Close()
 
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(data, v)
+}
+
+func writeJSONFile(filename string, v interface{}) error {
+	mu.Lock()
+	defer mu.Unlock()
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	data, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	_, err = file.Write(data)
+	return err
+}
+
+// Book Handlers
 func getBooks(c *gin.Context) {
+	var books []Book
+	if err := readJSONFile(booksFile, &books); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to read books"})
+		return
+	}
 	c.IndentedJSON(http.StatusOK, books)
 }
 
 func getBook(c *gin.Context) {
-	id := c.Param("id")
-	for _, book := range books {
-		if book.ID == id {
-			c.IndentedJSON(http.StatusOK, book)
-			return
-		}
+	indexStr := c.Param("index")
+	index, err := strconv.Atoi(indexStr)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Invalid index"})
+		return
 	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "book not found"})
+	var books []Book
+	if err := readJSONFile(booksFile, &books); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to read books"})
+		return
+	}
+
+	if index >= 0 && index < len(books) {
+		c.IndentedJSON(http.StatusOK, books[index])
+	} else {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Book not found"})
+	}
 }
 
 func addBook(c *gin.Context) {
 	var newBook Book
-
-	// Call BindJSON to bind the received JSON to newBook.
 	if err := c.BindJSON(&newBook); err != nil {
 		return
 	}
-
-	// Add the new book to the slice.
+	var books []Book
+	if err := readJSONFile(booksFile, &books); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to read books"})
+		return
+	}
 	books = append(books, newBook)
+	if err := writeJSONFile(booksFile, books); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to save book"})
+		return
+	}
 	c.IndentedJSON(http.StatusCreated, newBook)
 }
 
 func updateBook(c *gin.Context) {
-	id := c.Param("id")
+	indexStr := c.Param("index")
+	index, err := strconv.Atoi(indexStr)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Invalid index"})
+		return
+	}
 	var updatedBook Book
-
-	// Call BindJSON to bind the received JSON to updatedBook.
 	if err := c.BindJSON(&updatedBook); err != nil {
 		return
 	}
+	var books []Book
+	if err := readJSONFile(booksFile, &books); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to read books"})
+		return
+	}
 
-	for i, book := range books {
-		if book.ID == id {
-			books[i] = updatedBook
-			c.IndentedJSON(http.StatusOK, updatedBook)
+	if index >= 0 && index < len(books) {
+		books[index] = updatedBook
+		if err := writeJSONFile(booksFile, books); err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to save book"})
 			return
 		}
+		c.IndentedJSON(http.StatusOK, updatedBook)
+	} else {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Book not found"})
 	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "book not found"})
 }
 
 func deleteBook(c *gin.Context) {
-	id := c.Param("id")
-	for i, book := range books {
-		if book.ID == id {
-			books = append(books[:i], books[i+1:]...)
-			c.IndentedJSON(http.StatusOK, gin.H{"message": "book deleted"})
+	indexStr := c.Param("index")
+	index, err := strconv.Atoi(indexStr)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Invalid index"})
+		return
+	}
+	var books []Book
+	if err := readJSONFile(booksFile, &books); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to read books"})
+		return
+	}
+
+	if index >= 0 && index < len(books) {
+		books = append(books[:index], books[index+1:]...)
+		if err := writeJSONFile(booksFile, books); err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to save books"})
 			return
 		}
+		c.IndentedJSON(http.StatusOK, gin.H{"message": "Book deleted"})
+	} else {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Book not found"})
 	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "book not found"})
+}
+
+// Animal Handlers
+func getAnimals(c *gin.Context) {
+	var animals []Animal
+	if err := readJSONFile(animalsFile, &animals); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to read animals"})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, animals)
+}
+
+func getAnimal(c *gin.Context) {
+	indexStr := c.Param("index")
+	index, err := strconv.Atoi(indexStr)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Invalid index"})
+		return
+	}
+	var animals []Animal
+	if err := readJSONFile(animalsFile, &animals); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to read animals"})
+		return
+	}
+
+	if index >= 0 && index < len(animals) {
+		c.IndentedJSON(http.StatusOK, animals[index])
+	} else {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Animal not found"})
+	}
+}
+
+func addAnimal(c *gin.Context) {
+	var newAnimal Animal
+	if err := c.BindJSON(&newAnimal); err != nil {
+		return
+	}
+	var animals []Animal
+	if err := readJSONFile(animalsFile, &animals); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to read animals"})
+		return
+	}
+	animals = append(animals, newAnimal)
+	if err := writeJSONFile(animalsFile, animals); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to save animal"})
+		return
+	}
+	c.IndentedJSON(http.StatusCreated, newAnimal)
+}
+
+func updateAnimal(c *gin.Context) {
+	indexStr := c.Param("index")
+	index, err := strconv.Atoi(indexStr)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Invalid index"})
+		return
+	}
+	var updatedAnimal Animal
+	if err := c.BindJSON(&updatedAnimal); err != nil {
+		return
+	}
+	var animals []Animal
+	if err := readJSONFile(animalsFile, &animals); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to read animals"})
+		return
+	}
+
+	if index >= 0 && index < len(animals) {
+		animals[index] = updatedAnimal
+		if err := writeJSONFile(animalsFile, animals); err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to save animal"})
+			return
+		}
+		c.IndentedJSON(http.StatusOK, updatedAnimal)
+	} else {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Animal not found"})
+	}
+}
+
+func deleteAnimal(c *gin.Context) {
+	indexStr := c.Param("index")
+	index, err := strconv.Atoi(indexStr)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Invalid index"})
+		return
+	}
+	var animals []Animal
+	if err := readJSONFile(animalsFile, &animals); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to read animals"})
+		return
+	}
+
+	if index >= 0 && index < len(animals) {
+		animals = append(animals[:index], animals[index+1:]...)
+		if err := writeJSONFile(animalsFile, animals); err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Failed to save animals"})
+			return
+		}
+		c.IndentedJSON(http.StatusOK, gin.H{"message": "Animal deleted"})
+	} else {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Animal not found"})
+	}
 }
 
 func main() {
@@ -168,18 +286,19 @@ func main() {
 	{
 		// Book routes
 		api.GET("/books", getBooks)
-		api.GET("/books/:id", getBook)
+		api.GET("/books/:index", getBook)
 		api.POST("/books", addBook)
-		api.PUT("/books/:id", updateBook)
-		api.DELETE("/books/:id", deleteBook)
+		api.PUT("/books/:index", updateBook)
+		api.DELETE("/books/:index", deleteBook)
 
 		// Animal routes
 		api.GET("/animals", getAnimals)
-		api.GET("/animals/:id", getAnimal)
+		api.GET("/animals/:index", getAnimal)
 		api.POST("/animals", addAnimal)
-		api.PUT("/animals/:id", updateAnimal)
-		api.DELETE("/animals/:id", deleteAnimal)
+		api.PUT("/animals/:index", updateAnimal)
+		api.DELETE("/animals/:index", deleteAnimal)
 	}
 
-	router.Run("localhost:8080")
+	// Start server
+	router.Run(":8080")
 }
