@@ -1,0 +1,73 @@
+.books-section {
+    background: #ffffff;
+    padding: 20px;
+    border: 1px solid #4caf50;
+    border-radius: 5px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.books-section h2 {
+    color: #000000;
+}
+
+.book-actions {
+    margin-top: 20px;
+}
+
+.book-actions button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.book-actions button:hover {
+    background-color: #45a049;
+}
+
+.book-actions input {
+    padding: 10px;
+    border: 1px solid #4caf50;
+    border-radius: 5px;
+    margin: 5px;
+    width: calc(100% - 22px);
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    background: #ffffff;
+    margin: 5px 0;
+    padding: 10px;
+    border: 1px solid #4caf50;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+li button {
+    margin-left: 10px;
+    background-color: #e53935; /* Red button for delete */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+li button:hover {
+    background-color: #d32f2f;
+}

@@ -9,60 +9,24 @@
         <h1>CRUD API Frontend</h1>
     </header>
     <div class="container">
-        <h1>Books</h1>
-        <div>
-            <h2>Get Books</h2>
-            <button onclick="getBooks()">Get Books</button>
+        <div class="books-section">
+            <h2>Books</h2>
             <ul id="books-list"></ul>
-        </div>
-        <div>
-            <h2>Add Book</h2>
-            <input id="add-book-title" placeholder="Title" />
-            <input id="add-book-author" placeholder="Author" />
-            <button onclick="addBook()">Add Book</button>
-        </div>
-        <div>
-            <h2>Update Book</h2>
-            <input id="update-book-index" placeholder="Index" />
-            <input id="update-book-title" placeholder="Title" />
-            <input id="update-book-author" placeholder="Author" />
-            <button onclick="updateBook()">Update Book</button>
-        </div>
-        <div>
-            <h2>Delete Book</h2>
-            <input id="delete-book-index" placeholder="Index" />
-            <button onclick="deleteBook()">Delete Book</button>
-        </div>
-        
-        <h1>Animals</h1>
-        <div>
-            <h2>Get Animals</h2>
-            <button onclick="getAnimals()">Get Animals</button>
-            <ul id="animals-list"></ul>
-        </div>
-        <div>
-            <h2>Add Animal</h2>
-            <input id="add-animal-name" placeholder="Name" />
-            <input id="add-animal-type" placeholder="Type" />
-            <button onclick="addAnimal()">Add Animal</button>
-        </div>
-        <div>
-            <h2>Update Animal</h2>
-            <input id="update-animal-index" placeholder="Index" />
-            <input id="update-animal-name" placeholder="Name" />
-            <input id="update-animal-type" placeholder="Type" />
-            <button onclick="updateAnimal()">Update Animal</button>
-        </div>
-        <div>
-            <h2>Delete Animal</h2>
-            <input id="delete-animal-index" placeholder="Index" />
-            <button onclick="deleteAnimal()">Delete Animal</button>
+            <div class="book-actions">
+                
+                <input id="book-index" placeholder="Index" />
+                <input id="book-title" placeholder="Title" />
+                <input id="book-author" placeholder="Author" />
+                <button onclick="getBooks()">Get Books</button>
+                <button onclick="addBook()">Add Book</button>
+                <button onclick="updateBook()">Update Book</button>
+                <button onclick="deleteBook()">Delete Book</button>
+            </div>
         </div>
     </div>
     
     <script>
         const bookApiUrl = '/api/books';
-        const animalApiUrl = '/api/animals';
 
         async function getBooks() {
             const response = await fetch(bookApiUrl);
@@ -119,66 +83,6 @@
             getBooks();
         }
 
-        async function getAnimals() {
-            const response = await fetch(animalApiUrl);
-            const animals = await response.json();
-            const animalsList = document.getElementById('animals-list');
-            animalsList.innerHTML = '';
-            animals.forEach((animal, index) => {
-                const li = document.createElement('li');
-                li.textContent = `${index}: ${animal.name} (${animal.type})`;
-                animalsList.appendChild(li);
-            });
-        }
-
-        async function addAnimal() {
-            const name = document.getElementById('add-animal-name').value;
-            const type = document.getElementById('add-animal-type').value;
-            const newAnimal = { name, type };
-
-            await fetch(animalApiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newAnimal),
-            });
-
-            getAnimals();
-        }
-
-        async function updateAnimal() {
-            const index = document.getElementById('update-animal-index').value;
-            const name = document.getElementById('update-animal-name').value;
-            const type = document.getElementById('update-animal-type').value;
-            const updatedAnimal = { name, type };
-
-            await fetch(`${animalApiUrl}/${index}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedAnimal),
-            });
-
-            getAnimals();
-        }
-
-        async function deleteAnimal() {
-            const index = document.getElementById('delete-animal-index').value;
-
-            await fetch(`${animalApiUrl}/${index}`, {
-                method: 'DELETE',
-            });
-
-            getAnimals();
-        }
-
-        // Load books and animals when the page loads
-        window.onload = () => {
-            getBooks();
-            getAnimals();
-        };
     </script>
 </body>
 </html>
