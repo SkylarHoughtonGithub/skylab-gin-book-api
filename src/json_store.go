@@ -8,9 +8,8 @@ import (
 )
 
 var (
-	booksFile   = "books.json"
-	animalsFile = "animals.json"
-	mu          sync.Mutex
+	booksFile = "books.json"
+	mu        sync.Mutex
 )
 
 func readJSONFile(filename string, v interface{}) error {

@@ -26,13 +26,6 @@ func main() {
 		api.POST("/books", addBook)
 		api.PUT("/books/:index", updateBook)
 		api.DELETE("/books/:index", deleteBook)
-
-		// Animal routes
-		api.GET("/animals", getAnimals)
-		api.GET("/animals/:index", getAnimal)
-		api.POST("/animals", addAnimal)
-		api.PUT("/animals/:index", updateAnimal)
-		api.DELETE("/animals/:index", deleteAnimal)
 	}
 
 	// Start server
