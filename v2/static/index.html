@@ -9,10 +9,9 @@
         <h1>CRUD API Frontend</h1>
     </header>
     <div class="container">
-        <h1>Books</h1>
         <div>
-            <h2>Get Books</h2>
-            <button onclick="getBooks()">Get Books</button>
+            <h2>List Books</h2>
+            <button onclick="ListBooks()">List Books</button>
             <ul id="books-list"></ul>
         </div>
         <div>
@@ -38,16 +37,31 @@
     <script>
         const bookApiUrl = '/api/books';
 
-        async function getBooks() {
-            const response = await fetch(bookApiUrl);
-            const books = await response.json();
-            const booksList = document.getElementById('books-list');
-            booksList.innerHTML = '';
-            books.forEach((book, index) => {
-                const li = document.createElement('li');
-                li.textContent = `${index}: ${book.title} by ${book.author}`;
-                booksList.appendChild(li);
-            });
+        async function ListBooks() {
+            try {
+                const response = await fetch(bookApiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const books = await response.json();
+                
+                if (!Array.isArray(books)) {
+                    throw new Error('Response is not an array');
+                }
+                
+                const booksList = document.getElementById('books-list');
+                booksList.innerHTML = '';
+                
+                books.forEach((book, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${index}: ${book.title} by ${book.author}`;
+                    booksList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Failed to list books:', error);
+            }
         }
 
         async function addBook() {
@@ -63,7 +77,7 @@
                 body: JSON.stringify(newBook),
             });
 
-            getBooks();
+            ListBooks();
         }
 
         async function updateBook() {
@@ -80,7 +94,7 @@
                 body: JSON.stringify(updatedBook),
             });
 
-            getBooks();
+            ListBooks();
         }
 
         async function deleteBook() {
@@ -90,12 +104,12 @@
                 method: 'DELETE',
             });
 
-            getBooks();
+            ListBooks();
         }
 
         // Load books when the page loads
         window.onload = () => {
-            getBooks();
+            ListBooks();
         };
     </script>
 </body>
