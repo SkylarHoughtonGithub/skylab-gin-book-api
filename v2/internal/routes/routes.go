@@ -3,6 +3,7 @@
 package routes
 
 import (
+	"net/http"
 	"skylab-book-chameleon/internal/database"
 	"skylab-book-chameleon/internal/handlers"
 
@@ -14,11 +15,24 @@ func SetupRouter(db *database.DB) *gin.Engine {
 
 	bookHandlers := &handlers.BookHandlers{DB: db}
 
-	r.POST("/books", bookHandlers.CreateBook)
-	r.GET("/books/:id", bookHandlers.GetBook)
-	r.PUT("/books/:id", bookHandlers.UpdateBook)
-	r.DELETE("/books/:id", bookHandlers.DeleteBook)
-	r.GET("/books", bookHandlers.ListBooks)
+	// Serve static files
+	r.Static("/static", "./static")
+
+	// Redirect from root path to /static/index.html
+	r.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/static/index.html")
+	})
+
+	// API routes
+	api := r.Group("/api")
+
+	{
+		api.POST("/books", bookHandlers.CreateBook)
+		api.GET("/books/:id", bookHandlers.GetBook)
+		api.PUT("/books/:id", bookHandlers.UpdateBook)
+		api.DELETE("/books/:id", bookHandlers.DeleteBook)
+		api.GET("/books", bookHandlers.ListBooks)
+	}
 
 	return r
 }

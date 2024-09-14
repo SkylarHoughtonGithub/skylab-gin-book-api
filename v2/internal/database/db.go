@@ -4,6 +4,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 
 	_ "github.com/lib/pq"
 )
@@ -21,6 +22,21 @@ func NewDB(dataSourceName string) (*DB, error) {
 		return nil, err
 	}
 	return &DB{db}, nil
+}
+
+func CreateTable(db *DB) error {
+	createTableSQL := `
+    CREATE TABLE books (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        author VARCHAR(255) NOT NULL
+    );
+    `
+	_, err := db.Exec(createTableSQL)
+	if err != nil {
+		return fmt.Errorf("error creating table: %w", err)
+	}
+	return nil
 }
 
 type Book struct {

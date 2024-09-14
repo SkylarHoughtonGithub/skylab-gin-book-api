@@ -34,6 +34,13 @@ func main() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
+	// Create the books table if it does not exist
+	err = database.CreateTable(db)
+	if err != nil {
+		log.Fatalf("Error creating table: %v", err)
+	}
+	fmt.Println("Table created or already exists.")
+
 	r := routes.SetupRouter(db)
 
 	log.Printf("Starting server on :%d", cfg.Server.Port)
