@@ -3,8 +3,8 @@
 package routes
 
 import (
-	"skylab/internal/database"
-	"skylab/internal/handlers"
+	"skylab-book-chameleon/internal/database"
+	"skylab-book-chameleon/internal/handlers"
 
 	"github.com/gin-gonic/gin"
 )

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"skylab/internal/database"
+	"skylab-book-chameleon/internal/database"
 
 	"github.com/gin-gonic/gin"
 )
