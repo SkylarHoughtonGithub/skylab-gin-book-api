@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>CRUD API Frontend</title>
-    <link rel="stylesheet" href="styles.css">
+    <head>
+        <title>CRUD API Frontend</title>
+        <link rel="stylesheet" href="styles.css">
+        <script type="text/javascript" src="books.js"></script>
 </head>
 <body>
     <header>
@@ -33,84 +34,5 @@
             <button onclick="deleteBook()">Delete Book</button>
         </div>
     </div>
-    
-    <script>
-        const bookApiUrl = '/api/books';
-
-        async function ListBooks() {
-            try {
-                const response = await fetch(bookApiUrl);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                
-                const books = await response.json();
-                
-                if (!Array.isArray(books)) {
-                    throw new Error('Response is not an array');
-                }
-                
-                const booksList = document.getElementById('books-list');
-                booksList.innerHTML = '';
-                
-                books.forEach((book, index) => {
-                    const li = document.createElement('li');
-                    li.textContent = `${index}: ${book.title} by ${book.author}`;
-                    booksList.appendChild(li);
-                });
-            } catch (error) {
-                console.error('Failed to list books:', error);
-            }
-        }
-
-        async function addBook() {
-            const title = document.getElementById('add-book-title').value;
-            const author = document.getElementById('add-book-author').value;
-            const newBook = { title, author };
-
-            await fetch(bookApiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newBook),
-            });
-
-            ListBooks();
-        }
-
-        async function updateBook() {
-            const index = document.getElementById('update-book-index').value;
-            const title = document.getElementById('update-book-title').value;
-            const author = document.getElementById('update-book-author').value;
-            const updatedBook = { title, author };
-
-            await fetch(`${bookApiUrl}/${index}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedBook),
-            });
-
-            ListBooks();
-        }
-
-        async function deleteBook() {
-            const index = document.getElementById('delete-book-index').value;
-
-            await fetch(`${bookApiUrl}/${index}`, {
-                method: 'DELETE',
-            });
-
-            ListBooks();
-        }
-
-        // Load books when the page loads
-        window.onload = () => {
-            ListBooks();
-        };
-    </script>
 </body>
 </html>
