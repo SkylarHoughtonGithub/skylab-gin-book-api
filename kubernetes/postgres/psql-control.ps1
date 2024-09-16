@@ -44,7 +44,6 @@ function refresh {
 function Show-Usage {
     Write-Host "Usage: .\psql-control.ps1 <command>"
     Write-Host "Commands:"
-    Write-Host "  init    - Initialize the Kubernetes environment"
     Write-Host "  create  - Create PostgreSQL resources"
     Write-Host "  destroy - Destroy PostgreSQL resources"
     Write-Host "  refresh - Destroy and Create PostgreSQL resources"
@@ -57,9 +56,6 @@ if ($args.Count -eq 0) {
 }
 
 switch ($args[0]) {
-    "init" {
-        init
-    }
     "create" {
         apply
     }
