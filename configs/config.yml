@@ -2,7 +2,7 @@
 
 server:
   port: 8080
-  debug: true
+  # debug: true
 
 database:
   driver: postgres
@@ -13,5 +13,5 @@ database:
   dbname: bookstore
   sslmode: disable
 
-log:
-  level: debug
+# log:
+#   level: debug
