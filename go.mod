@@ -1,6 +1,6 @@
-module skylab-go-chameleon
+module skylab-book-chameleon
 
-go 1.23
+go 1.23.1
 
 require (
 	github.com/gin-gonic/gin v1.10.0
