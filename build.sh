@@ -7,6 +7,6 @@ NAME=$1
 echo "Building $NAME..."
 
 # Build binary
-go build -o $NAME ./cmd/server
+go build -o $NAME ./src/cmd/server
 
 echo "$NAME built successfully!"
