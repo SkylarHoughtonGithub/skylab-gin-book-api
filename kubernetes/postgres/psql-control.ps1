@@ -10,6 +10,7 @@ New-Alias k kubectl
 
 function init {
     Write-Host "Preparing env..."
+    minikube stop
     minikube start
     Write-Host "env started."
 }
