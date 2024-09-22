@@ -12,7 +12,7 @@ import (
 )
 
 type BookHandlers struct {
-	DB *database.DB
+	DB *database.DB `json:"db,omitempty"`
 }
 
 func (h *BookHandlers) CreateBook(c *gin.Context) {

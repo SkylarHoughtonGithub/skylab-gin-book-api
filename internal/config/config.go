@@ -4,32 +4,33 @@ package config
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Server   ServerConfig
-	Database DatabaseConfig
-	Log      LogConfig
+	Server   ServerConfig   `json:"server,omitempty"`
+	Database DatabaseConfig `json:"database,omitempty"`
+	Log      LogConfig      `json:"log,omitempty"`
 }
 
 type ServerConfig struct {
-	Port  int
-	Debug bool
+	Port  int  `json:"port,omitempty"`
+	Debug bool `json:"debug,omitempty"`
 }
 
 type DatabaseConfig struct {
-	Driver   string
-	Host     string
-	Port     int
-	User     string
-	Password string
-	DBName   string
-	SSLMode  string
+	Driver   string `json:"driver,omitempty"`
+	Host     string `json:"host,omitempty"`
+	Port     int    `json:"port,omitempty"`
+	User     string `json:"user,omitempty"`
+	Password string `json:"password,omitempty"`
+	DBName   string `json:"db_name,omitempty"`
+	SSLMode  string `json:"ssl_mode,omitempty"`
 }
 
 type LogConfig struct {
-	Level string
+	Level string `json:"level,omitempty"`
 }
 
 func LoadConfig() (*Config, error) {
