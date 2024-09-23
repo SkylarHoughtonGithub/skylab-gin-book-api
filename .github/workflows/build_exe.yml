@@ -41,7 +41,7 @@ jobs:
       shell: bash
 
   build_exe:
-    needs: load_env
+    needs: [ load_env, test ] 
     if: github.event.pull_request.merged == true || github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
