@@ -24,7 +24,23 @@ jobs:
       NAME: ${{ steps.dotenv.outputs.NAME }}
       TAGS: ${{ steps.dotenv.outputs.TAGS }}
 
-  build:
+  test:
+    needs: load_env
+    if: github.event.pull_request.merged == true || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23.1'
+
+    - name: Run unit tests
+      run: ./test.sh
+      shell: bash
+
+  build_exe:
     needs: load_env
     if: github.event.pull_request.merged == true || github.event_name == 'push'
     runs-on: ubuntu-latest
