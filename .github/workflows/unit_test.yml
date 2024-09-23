@@ -1,4 +1,4 @@
-name: Test Go App
+name: 1. Go Unit Test
 
 on:
   pull_request:

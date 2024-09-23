@@ -1,4 +1,4 @@
-name: Build and Deploy Go App
+name: 2. Binary Artifact Build
 
 on:
   pull_request:
