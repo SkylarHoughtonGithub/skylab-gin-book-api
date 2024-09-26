@@ -3,7 +3,7 @@
 [![1. Go Unit Test](https://github.com/SkylarHoughtonGithub/go-chameleon/actions/workflows/unit_test.yml/badge.svg)](https://github.com/SkylarHoughtonGithub/go-chameleon/actions/workflows/unit_test.yml)
 
 [![2. Binary Artifact Build](https://github.com/SkylarHoughtonGithub/go-chameleon/actions/workflows/build_exe.yml/badge.svg)](https://github.com/SkylarHoughtonGithub/go-chameleon/actions/workflows/build_exe.yml)
-
+.
 ## Table of Contents
 1. [Overview](#overview)
 2. [Downloading the Artifact](#downloading-the-artifact)
