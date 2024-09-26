@@ -1,4 +1,4 @@
-name: 1. Go Unit Test
+name: _Go Unit Test
 
 on:
   pull_request:
