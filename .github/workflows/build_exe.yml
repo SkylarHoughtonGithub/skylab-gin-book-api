@@ -1,4 +1,4 @@
-name: 2. Binary Artifact Build
+name: Binary Artifact Build
 
 on:
   pull_request:
@@ -26,7 +26,7 @@ jobs:
 
   test:
     needs: load_env
-    if: github.event.pull_request.merged == true || github.event_name == 'push'
+    if: github.event.pull_request.merged == true || startsWith(github.head_ref, 'release')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -38,7 +38,7 @@ jobs:
 
   build_exe:
     needs: [ load_env, test ] 
-    if: github.event.pull_request.merged == true || github.event_name == 'push'
+    if: github.event.pull_request.merged == true || startsWith(github.head_ref, 'release')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
