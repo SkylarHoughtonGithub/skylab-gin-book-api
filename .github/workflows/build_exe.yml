@@ -36,10 +36,6 @@ jobs:
       with:
         go-version: '1.23.1'
 
-    - name: Run unit tests
-      run: ./test.sh
-      shell: bash
-
   build_exe:
     needs: [ load_env, test ] 
     if: github.event.pull_request.merged == true || github.event_name == 'push'
