@@ -3,19 +3,24 @@
 [![1. Go Unit Test](https://github.com/SkylarHoughtonGithub/go-chameleon/actions/workflows/unit_test.yml/badge.svg)](https://github.com/SkylarHoughtonGithub/go-chameleon/actions/workflows/unit_test.yml)
 
 [![2. Binary Artifact Build](https://github.com/SkylarHoughtonGithub/go-chameleon/actions/workflows/build_exe.yml/badge.svg)](https://github.com/SkylarHoughtonGithub/go-chameleon/actions/workflows/build_exe.yml)
+
+[![3. Build and publish Container](https://github.com/SkylarHoughtonGithub/go-book-chameleon/actions/workflows/build_container.yml/badge.svg?branch=release)](https://github.com/SkylarHoughtonGithub/go-book-chameleon/actions/workflows/build_container.yml)
 .
 ## Table of Contents
 1. [Overview](#overview)
-2. [Downloading the Artifact](#downloading-the-artifact)
+2. [Container Build](#container-build)
+   - [Step 1: Go to Package page](#step-1-package-page)
+   - [Step 2: Download from ghcr](#step-2-download-from-ghcr)
+3. [Downloading the Artifact](#downloading-the-artifact)
    - [Step 1: Go to the Actions Tab](#step-1-go-to-the-actions-tab)
    - [Step 2: Select the Latest Workflow Run](#step-2-select-the-latest-workflow-run)
    - [Step 3: Find the Artifacts Section](#step-3-find-the-artifacts-section)
    - [Step 4: Download the Artifact](#step-4-download-the-artifact)
-3. [Executing the Binary on Linux](#executing-the-binary-on-linux)
+4. [Executing the Binary on Linux](#executing-the-binary-on-linux)
    - [Step 1: Extract the Artifact](#step-1-extract-the-artifact)
    - [Step 2: Make the Binary Executable](#step-2-make-the-binary-executable)
    - [Step 3: Run the Binary](#step-3-run-the-binary)
-4. [Example Usage](#example-usage)
+5. [Example Usage](#example-usage)
 
 
 ## Overview
@@ -23,6 +28,20 @@
 This project provides a web app that performs CRUD API operations with the gin web framework and stores results in a postgres database. 
  
 You can download the compiled binary as an artifact from the GitHub Actions CI/CD workflow and execute it on your Linux machine.
+
+## Container Build
+A container form to implement this application is available.
+
+1. **Go to the Package Tab**:
+Go to the [package tab](https://github.com/SkylarHoughtonGithub/go-book-chameleon/pkgs/container/go-book-chameleon)
+
+2. **Download from ghcr**:
+Make sure to use version from the package tab, but an example download would be 
+
+```
+docker pull ghcr.io/skylarhoughtongithub/go-book-chameleon:sha256-a9257b5693babf355f6f931a4af4b11b1943c8b3fedd8868895c963b920cd8d3
+```
+And then run in the desired container engine of your choice.
 
 ## Downloading the Artifact
 
