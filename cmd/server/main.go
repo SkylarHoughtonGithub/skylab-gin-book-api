@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"skylab-book-chameleon/internal/config"
-	"skylab-book-chameleon/internal/database"
-	"skylab-book-chameleon/internal/routes"
+	"skylab-book-gin-api/internal/config"
+	"skylab-book-gin-api/internal/database"
+	"skylab-book-gin-api/internal/routes"
 
 	"github.com/gin-gonic/gin"
 )

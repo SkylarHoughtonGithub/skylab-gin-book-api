@@ -4,10 +4,10 @@ package routes
 
 import (
 	"net/http"
-	"skylab-book-chameleon/internal/database"
-	"skylab-book-chameleon/internal/handlers"
-
 	"github.com/gin-gonic/gin"
+
+	"skylab-book-gin-api/internal/database"
+	"skylab-book-gin-api/internal/handlers"
 )
 
 func SetupRouter(db *database.DB) *gin.Engine {

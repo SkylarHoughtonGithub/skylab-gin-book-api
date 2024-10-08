@@ -5,10 +5,9 @@ package handlers
 import (
 	"net/http"
 	"strconv"
-
-	"skylab-book-chameleon/internal/database"
-
 	"github.com/gin-gonic/gin"
+
+	"skylab-book-gin-api/internal/database"
 )
 
 type BookHandlers struct {

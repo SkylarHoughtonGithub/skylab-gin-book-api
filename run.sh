@@ -1,6 +1,3 @@
 #!/bin/bash
-set -e
 
-PATH=$1
-
-go run $PATH
+/usr/bin/go run cmd/server/main.go
