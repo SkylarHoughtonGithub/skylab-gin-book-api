@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"github.com/gin-gonic/gin"
 
-	"skylab-book-gin-api/internal/database"
+	"skylab-gin-book-api/internal/database"
 )
 
 type BookHandlers struct {

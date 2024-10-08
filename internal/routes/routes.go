@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 
-	"skylab-book-gin-api/internal/database"
-	"skylab-book-gin-api/internal/handlers"
+	"skylab-gin-book-api/internal/database"
+	"skylab-gin-book-api/internal/handlers"
 )
 
 func SetupRouter(db *database.DB) *gin.Engine {

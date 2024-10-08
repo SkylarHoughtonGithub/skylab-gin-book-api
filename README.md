@@ -94,11 +94,11 @@ When it connects correctly, it should tell you the tables were present or create
 Table created or already exists.
 Starting server on :8080
 ```
-![Server Started](images/server_started.png)
+![Server Started](static/images/server_started.png)
 
 
 At this point you can start submitting requests!
-![Added Entries](images/entries_added.png)
+![Added Entries](static/images/entries_added.png)
 ```bash
 [GIN] 2024/09/22 - 20:55:06 | 200 |    100.5774ms |             ::1 | GET      "/static/"
 [GIN] 2024/09/22 - 20:55:06 | 304 |     11.7073ms |             ::1 | GET      "/static/styles.css"

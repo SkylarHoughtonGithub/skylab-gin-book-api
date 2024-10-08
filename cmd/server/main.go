@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"skylab-book-gin-api/internal/config"
-	"skylab-book-gin-api/internal/database"
-	"skylab-book-gin-api/internal/routes"
+	"skylab-gin-book-api/internal/config"
+	"skylab-gin-book-api/internal/database"
+	"skylab-gin-book-api/internal/routes"
 
 	"github.com/gin-gonic/gin"
 )

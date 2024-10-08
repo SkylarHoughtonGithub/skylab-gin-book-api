@@ -1,4 +1,4 @@
-module skylab-book-gin-api
+module skylab-gin-book-api
 
 go 1.22.7
 
