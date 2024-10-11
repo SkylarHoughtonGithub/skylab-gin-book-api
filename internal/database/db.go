@@ -3,25 +3,34 @@
 package database
 
 import (
+	"context"
 	"database/sql"
+	"time"
 	"fmt"
 
+	"github.com/go-redis/redis/v8"
 	_ "github.com/lib/pq"
 )
 
 type DB struct {
 	*sql.DB
+	Redis *redis.Client
 }
 
-func NewDB(dataSourceName string) (*DB, error) {
-	db, err := sql.Open("postgres", dataSourceName)
-	if err != nil {
-		return nil, err
-	}
-	if err = db.Ping(); err != nil {
-		return nil, err
-	}
-	return &DB{db}, nil
+func NewDB(dbConnString, cacheConnString string) (*DB, error) {
+    db, err := sql.Open("postgres", dbConnString)
+    if err != nil {
+        return nil, err
+    }
+    if err = db.Ping(); err != nil {
+        return nil, err
+    }
+
+    rdb := redis.NewClient(&redis.Options{
+        Addr: cacheConnString,
+    })
+
+    return &DB{db, rdb}, nil
 }
 
 func CreateTable(db *DB) error {
@@ -89,4 +98,21 @@ func (db *DB) ListBooks(limit, offset int) ([]Book, error) {
 		books = append(books, b)
 	}
 	return books, nil
+}
+
+// Redis helper functions
+
+func (db *DB) SetCache(key string, value interface{}, expiration time.Duration) error {
+	ctx := context.Background()
+	return db.Redis.Set(ctx, key, value, expiration).Err()
+}
+
+func (db *DB) GetCache(key string) (string, error) {
+	ctx := context.Background()
+	return db.Redis.Get(ctx, key).Result()
+}
+
+func (db *DB) DeleteCache(key string) error {
+	ctx := context.Background()
+	return db.Redis.Del(ctx, key).Err()
 }

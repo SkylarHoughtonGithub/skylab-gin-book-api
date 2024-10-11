@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	Server   ServerConfig   `json:"server,omitempty"`
+	Cache    CacheConfig `json:"database,omitempty"`
 	Database DatabaseConfig `json:"database,omitempty"`
 	Log      LogConfig      `json:"log,omitempty"`
 }
@@ -16,6 +17,13 @@ type Config struct {
 type ServerConfig struct {
 	Port  int  `json:"port,omitempty"`
 	Debug bool `json:"debug,omitempty"`
+}
+
+type CacheConfig struct {
+	Driver   string `json:"driver,omitempty"`
+	Host     string `json:"host,omitempty"`
+	Port     int    `json:"port,omitempty"`
+	Password string `json:"password,omitempty"`
 }
 
 type DatabaseConfig struct {
@@ -52,4 +60,8 @@ func LoadConfig() (*Config, error) {
 func (c *DatabaseConfig) ConnectionString() string {
 	return fmt.Sprintf("%s://%s:%s@%s:%d/%s?sslmode=%s",
 		c.Driver, c.User, c.Password, c.Host, c.Port, c.DBName, c.SSLMode)
+}
+
+func (c *CacheConfig) RedisString() string {
+	return fmt.Sprintf("%s:%s", c.Host, c.Port)
 }

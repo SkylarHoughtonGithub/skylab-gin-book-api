@@ -32,7 +32,7 @@ func run() error {
 		return fmt.Errorf("failed to setup database: %w", err)
 	}
 
-	r := routes.SetupRouter(db)
+	r := routes.SetupRouter(cfg, db)
 
 	log.Printf("Starting server on :%d", cfg.Server.Port)
 	if err := r.Run(fmt.Sprintf(":%d", cfg.Server.Port)); err != nil {
@@ -54,7 +54,7 @@ func setupEnvironment(cfg *config.Config) error {
 }
 
 func setupDatabase(cfg *config.Config) (*database.DB, error) {
-	db, err := database.NewDB(cfg.Database.ConnectionString())
+	db, err := database.NewDB(cfg.Database.ConnectionString(), cfg.Cache.RedisString())
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
@@ -72,8 +72,8 @@ func setLogLevel(level string) {
 	case "debug":
 		log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 	case "info":
-		log.SetFlags(log.Ldate | log.Ltime)
+		log.SetFlags(log.Ltime | log.Lshortfile)
 	default:
-		log.SetFlags(0)
+		log.SetFlags(log.Ltime)
 	}
 }
