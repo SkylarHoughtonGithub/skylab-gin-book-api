@@ -20,6 +20,7 @@ type ServerConfig struct {
 }
 
 type CacheConfig struct {
+	UseCache bool   `json:"use_cache,omitempty"`
 	Driver   string `json:"driver,omitempty"`
 	Host     string `json:"host,omitempty"`
 	Port     int    `json:"port,omitempty"`
