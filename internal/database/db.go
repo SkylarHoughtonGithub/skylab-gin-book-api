@@ -8,6 +8,8 @@ import (
 	"time"
 	"fmt"
 
+	"skylab-gin-book-api/internal/config"
+
 	"github.com/go-redis/redis/v8"
 	_ "github.com/lib/pq"
 )
@@ -18,19 +20,42 @@ type DB struct {
 }
 
 func NewDB(dbConnString, cacheConnString string) (*DB, error) {
-    db, err := sql.Open("postgres", dbConnString)
+    cfg, err := config.LoadConfig()
+	
+	fmt.Println("Attempting to connect to postgres...")
+	db, err := sql.Open("postgres", dbConnString)
     if err != nil {
+		fmt.Errorf("error accessing postgres instance: %w", err)
         return nil, err
-    }
+    } else {
+		fmt.Println("Successfully connected to the postgres instance.")
+	}
     if err = db.Ping(); err != nil {
+		fmt.Println("error accessing postgres instance: %w", err)
         return nil, err
     }
 
-    rdb := redis.NewClient(&redis.Options{
-        Addr: cacheConnString,
-    })
+	var rdb *redis.Client
+	if cfg.Cache.UseCache {
+		fmt.Println("Attempting to connect to redis...")
+		rdb := redis.NewClient(&redis.Options{
+			Addr: cacheConnString,
+		})
+		
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		
+		_, err = rdb.Ping(ctx).Result()
+		if err != nil {
+		fmt.Println("Warning: Redis is not available. The application will continue without caching.")
+		} else {
+			fmt.Println("Successfully connected to Redis.")
+		}
+	} else {
+		fmt.Println("Redis is disabled in the configuration. The application will run without caching.")
+	}
 
-    return &DB{db, rdb}, nil
+    return &DB{DB: db, Redis: rdb}, nil
 }
 
 func CreateTable(db *DB) error {
@@ -45,6 +70,7 @@ func CreateTable(db *DB) error {
 	if err != nil {
 		return fmt.Errorf("error creating table: %w", err)
 	}
+	fmt.Println("Postgres tables staged or already present.")
 	return nil
 }
 

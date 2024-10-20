@@ -62,8 +62,6 @@ func setupDatabase(cfg *config.Config) (*database.DB, error) {
 	if err := database.CreateTable(db); err != nil {
 		return nil, fmt.Errorf("error creating table: %w", err)
 	}
-	fmt.Println("Table created or already exists.")
-
 	return db, nil
 }
 
