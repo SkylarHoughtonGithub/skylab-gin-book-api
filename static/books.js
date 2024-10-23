@@ -1,6 +1,6 @@
 const bookApiUrl = '/api/books';
 
-async function ListBooks() {
+async function listBooks() {
     try {
         const response = await fetch(bookApiUrl);
         
@@ -9,6 +9,7 @@ async function ListBooks() {
         }
         
         const data = await response.json();
+        
         
         if (!data.books || !Array.isArray(data.books)) {
             throw new Error('Response does not contain an array of books');
@@ -86,5 +87,5 @@ async function deleteBook() {
 
 // Load books when the page loads
 window.onload = () => {
-    ListBooks();
+    listBooks();
 };
